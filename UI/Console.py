@@ -10,6 +10,7 @@ def PrintMenu():
     print("2. Stergere Rezervare")
     print("3. Modificare Rezervare")
     print("4. Undo")
+    print("r. Redo")
     print(f"{bcolors.OKBLUE}5. Trecerea rezervarilor pe un nume "
           f"la o clasa superioara")
     print("6. Ieftinirea tuturor rezervărilor "
@@ -178,12 +179,14 @@ def UiRezervariNume(lista):
 def runMenu():
     lista = []
     undo = []
+    redo = []
     while True:
         PrintMenu()
         optiune = input("Dați optiunea: ")
         if optiune == "1":
             undo = lista
             lista =  uiAdaugaRezervare(lista)
+            redo = lista
         elif optiune == "2":
             if len(lista) < 1:
                 print(f"{bcolors.FAIL}Nu este nicio rezevare de sters "
@@ -191,6 +194,7 @@ def runMenu():
             else:
                 undo = lista
                 lista = uiStergeRezervare(lista)
+                redo = lista
         elif optiune == "3":
             if len(lista) < 1:
                 print(f"{bcolors.FAIL}Nu este nicio rezevare de modificat "
@@ -198,11 +202,13 @@ def runMenu():
             else:
                 undo = lista
                 lista = uiModificaRezervare(lista)
+                redo = lista
         elif optiune == "4":
             lista = undo
         elif optiune == "5":
             undo = lista
             lista = trecere_la_rezervare_superioara(lista)
+            redo = lista
         elif optiune == "6":
             if len(lista) < 1:
                 print(f"{bcolors.FAIL}Nu este nicio rezevare facută "
@@ -212,6 +218,7 @@ def runMenu():
                 P = int(input(f"{bcolors.OKYELLOW}Dați procentajul dorit pentru"
                     f"ieftinirea preturilor: {bcolors.ENDC}"))
                 lista = reducere_preturi_checkinfacut(lista, P)
+                redo = lista
         elif optiune == "7":
             if len(lista) < 1:
                 print(f"{bcolors.FAIL}Nu este nicio rezevare facută "
@@ -225,7 +232,7 @@ def runMenu():
             else:
                 undo = lista
                 lista = ord_cresc_pret(lista)
-                ShowAll(lista)
+                redo = lista
         elif optiune == "9":
             if len(lista) < 1:
                 print(f"{bcolors.FAIL}Nu este nicio rezevare facută "
@@ -234,6 +241,8 @@ def runMenu():
                 UiRezervariNume(lista)
         elif optiune == "s" or optiune == "S":
             lista = []
+        elif optiune == "r" or optiune == "R":
+            lista = redo
         elif optiune == "a":
             ShowAll(lista)
         elif optiune == "x" or optiune == "X":
