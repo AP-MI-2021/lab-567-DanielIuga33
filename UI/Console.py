@@ -81,13 +81,29 @@ def uiAdaugaRezervare(lista):
     return adaugaRezervare(id, nume, clasa, pret, checkin, lista)
 
 def uiStergeRezervare(lista):
-    id = input(f"{bcolors.HEADER}Dati id-ul rezervarii pe care doriti/"
-               f"sa o stergeti: {bcolors.ENDC}")
+    id = ""
+    idbun = False
+    while idbun == False:
+        id = input(f"{bcolors.OKGREEN}Dati id-ul rezervarii pe care doriti/"
+                   f"sa il stergeti: {bcolors.ENDC}")
+        for rezervare in lista:
+            if id == getId(rezervare):
+                idbun = True
+        if idbun == False:
+            print("Id-ul dat nu există in rezervari, încearcă din nou:")
     return stergereRezervare(id, lista)
 
 def uiModificaRezervare(lista):
-    id = input(f"{bcolors.OKGREEN}Dati id-ul rezervarii pe care doriti/"
-               f"sa il modificati: {bcolors.ENDC}")
+    id = ""
+    idbun = False
+    while idbun == False:
+        id = input(f"{bcolors.OKGREEN}Dati id-ul rezervarii pe care doriti/"
+                   f"sa il modificati: {bcolors.ENDC}")
+        for rezervare in lista:
+            if id == getId(rezervare):
+                idbun = True
+        if idbun == False:
+            print("Id-ul dat nu există in rezervari")
     nume = input(f"{bcolors.BOLD}Dati numele noului zbor: {bcolors.ENDC}")
     print(f"{bcolors.OKCYAN}    Meniu de clase ale zborului:")
     print(f"{bcolors.OKGREEN}            1.Economy")
@@ -108,7 +124,29 @@ def uiModificaRezervare(lista):
             clasa = "Business"
         else:
             print("Clasa precizata nu exista, incearca din nou:")
-    pret = input(f"{bcolors.UNDERLINE}{bcolors.OKYELLOW}Dati pretul noului zbor: {bcolors.ENDC}")
+    pret = (input(f"{bcolors.UNDERLINE}{bcolors.OKYELLOW}Dati noul pret zborului: {bcolors.ENDC}"))
+    pretbun = True
+    while pretbun == True:
+        pretbun = False
+        try:
+            pret = int(pret)
+        except ValueError as ve:
+            print(("Eroare: {}, te rog reîncearcă: ".format(ve)))
+            pret = (input(f"{bcolors.UNDERLINE}{bcolors.OKYELLOW}Dati noul pret zborului: {bcolors.ENDC}"))
+            pretbun = True
+    pretbun = True
+    while pretbun == True:
+        pretbun = False
+        try:
+            if float(pret) < 0:
+                print(f"{bcolors.FAIL}Pretul nu poate fi negativ !")
+                pret = (input(f"{bcolors.UNDERLINE}{bcolors.OKYELLOW}Dati noul pret zborului: {bcolors.ENDC}"))
+                pretbun = True
+        except ValueError as er:
+            print(("Eroare: {}, te rog reîncearcă: ".format(er)))
+            pret = (input(f"{bcolors.UNDERLINE}{bcolors.OKYELLOW}Dati noul pret zborului: {bcolors.ENDC}"))
+            pretbun = True
+    pret = float(pret)
     checkin = ""
     print(f"{bcolors.OKCYAN}{bcolors.BOLD}Este facut checkinul? {bcolors.ENDC}")
     ok = True
