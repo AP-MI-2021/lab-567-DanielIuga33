@@ -1,72 +1,36 @@
 from Domain.Rezervare import getnume, getclasa, getcheckin, getpret, getId
-from Logic.CRUD import stergereRezervare
+from Logic.CRUD import stergereRezervare, adaugaRezervare, modificaRezervare
+from Validate.validate import validate_unique_id
 
 
-class bcolors:
-    HEADER = '\033[95m'
-    OKMAGENTA = '\033[35m'
-    OKBLUE = '\033[94m'
-    OKYELLOW = '\033[33m'
-    OKCYAN = '\033[96m'
-    OKORANGE='\033[43m'
-    OKWHITE = '\033[37m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
 
-def trecere_la_rezervare_superioara(lista):
+def trecere_la_rezervare_superioara(nume,lista):
     """
     trece rezervarea facuta pe un anumit nume
     citit de la tastatura la o clasa superioara (Economy<Economy Plus<Business)
     :param lista:lista de rezervari
     :return:lista modificata cu rezercari
     """
-    listaNoua = []
-    ok = True
-    if len(lista) == 0:
-        print(f"{bcolors.FAIL}{bcolors.BOLD}Nu este facuta nicio rezervare! Poti face una"
-              f"cu ajutorul primei optiuni:{bcolors.ENDC}")
-    else:
-        while ok == True:
-            print(f"{bcolors.OKMAGENTA}Rezervarile facute sunt: ")
-            for rezervare in lista:
-                print(rezervare["nume"] + "    clasa:" + rezervare["clasa"])
-            nume = input("Dati numele rezervarii pe care"
-                         "vreti sa o treceti la o clasa superioara sau x daca vrei sa renunti: ")
-            if nume == "x" or nume == "X":
-                ok = False
-            for rezervare in lista:
-                if getnume(rezervare) == nume:
-                    if getclasa(rezervare) == "Economy":
-                        rezervare["clasa"] = "Economy Plus"
-                        ok = False
-                    elif getclasa(rezervare) == "Economy Plus":
-                        rezervare["clasa"] = "Business"
-                        ok = False
-                    elif getclasa(rezervare) == "Business":
-                        print(f"{bcolors.OKGREEN}{bcolors.BOLD}Clasa zborului "+ getnume(rezervare)+f" este deja cea mai superioară{bcolors.ENDC}")
-                        ok = False
-                if rezervare not in listaNoua:
-                    listaNoua.append(rezervare)
-            if ok == True:
-                print(f"{bcolors.FAIL}Nu exista numele precizat in "
-                        f"lista de rezervari, te rog reincearcă: {bcolors.ENDC}")
-    return listaNoua
-def reducere_preturi_checkinfacut(lista,P):
-    listaNoua = []
+
+    for rezervare in lista:
+        if getnume(rezervare) == nume:
+            if getclasa(rezervare) == "Economy":
+                rezervare["clasa"] = "Economy Plus"
+            elif getclasa(rezervare) == "Economy Plus":
+                rezervare["clasa"] = "Business"
+            elif getclasa(rezervare) == "Business":
+                rezervare["clasa"] = "Business"
+    return lista
+
+def reducere_preturi_checkinfacut(lista,p):
     for rezervare in lista:
         a = int(getpret(rezervare))
         if getcheckin(rezervare) == "Făcut":
-            rezervare["pret"] = a - a*P/100
-        listaNoua.append(rezervare)
-    return listaNoua
+            rezervare["pret"] = a - a*p/100
+    return lista
+
 def max_pret_clasa(lista):
-    max_e = 0
-    max_ep = 0
-    max_b = 0
+    max_e,max_ep,max_b = 0,0,0
     for rezervare in lista:
         if getclasa(rezervare) == "Economy":
             if getpret(rezervare) > max_e:
@@ -77,10 +41,10 @@ def max_pret_clasa(lista):
         if getclasa(rezervare) == "Business":
             if getpret(rezervare) > max_b:
                 max_b = getpret(rezervare)
-    print(f"{bcolors.OKMAGENTA}{bcolors.BOLD}Clasa Economy are pretul maxim " + str(max_e))
-    print(f"{bcolors.OKMAGENTA}{bcolors.BOLD}Clasa Economy Plus are pretul maxim " + str(max_ep))
-    print(f"{bcolors.OKMAGENTA}{bcolors.BOLD}Clasa Business are pretul maxim " + str(max_b)+f"{bcolors.ENDC}")
-def ord_cresc_pret(lista):
+    return max_e, max_ep, max_b
+
+
+def ord_descresc_pret(lista):
     listaNoua = []
     while len(lista) > 0:
         max = 0
@@ -90,8 +54,10 @@ def ord_cresc_pret(lista):
         for rezervare in lista:
             if getpret(rezervare) == max:
                 listaNoua.append(rezervare)
-                lista = stergereRezervare(getId(rezervare),lista)
+                lista = stergereRezervare(getId(rezervare), lista)
     return listaNoua
+
+
 def suma_preturi_nume(lista):
     rezervariNominale = {}
     for rezervare in lista:
@@ -101,4 +67,47 @@ def suma_preturi_nume(lista):
             rezervariNominale[getnume(rezervare)] = getpret(rezervare) #adaugarea unui entry intr-un dictionar
     return rezervariNominale
 
+
+def comanda_date(date):
+    if len(date) == 6 and date[5] == 'adauga rezervare':
+        optiune2 = "1"
+        return optiune2
+    elif len(date) == 2 and date[1] == 'sterge rezervare':
+        optiune2 = "2"
+        return optiune2
+    elif len(date) == 6 and date[5] == 'modifica rezervare':
+        optiune2 = "3"
+        return optiune2
+    elif len(date) == 2 and date[1] == 'trece la clasa superioara':
+        optiune2 = "4"
+        return optiune2
+    elif len(date) == 2 and date[1] == "reducere pentru checkin facut":
+        optiune2 = "5"
+        return optiune2
+    elif len(date) == 1 and date[0] == "max pret clasa":
+        optiune2 = "6"
+        return optiune2
+    elif len(date) == 1 and date[0] == "ordoneaza descrescator":
+        optiune2 = "7"
+        return optiune2
+    elif len(date) == 1 and date[0] == "suma preturi nume":
+        optiune2 = "8"
+        return optiune2
+    elif len(date) == 1 and date[0] == "showall":
+        optiune2 = "a"
+        return optiune2
+    elif len(date) == 1 and date[0] == "x":
+        optiune2 = "x"
+        return optiune2
+    elif len(date) == 1 and date[0] == "undo":
+        optiune2 = "u"
+        return optiune2
+    elif len(date) == 1 and date[0] == "redo":
+        optiune2 = "r"
+        return optiune2
+
+
+# 1,Cluj,Economy,100,Făcut,adauga rezervare
+# 1,Turda,Economy,200,Făcut,adauga rezervare
+# 3,Anglia,Economy Plus,200,Facut,modifica rezervare
 

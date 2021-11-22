@@ -1,8 +1,8 @@
 from Teste.TestAll import runAllTests
-from UI.Console import runMenu
+from UI.Console import runmenu
 
 
 def main():
     runAllTests()
-    runMenu()
+    runmenu()
 main()
