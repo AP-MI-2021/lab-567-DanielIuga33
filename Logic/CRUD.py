@@ -1,6 +1,6 @@
 from Domain.Rezervare import getId, creareRezervare, getnume, getpret, getcheckin, getclasa
 
-def adaugaRezervare(id, nume, clasa, pret, checkin, lista, undo_commands = [], redo_commands = []):
+def adaugaRezervare(id, nume, clasa, pret, checkin, lista):
     '''
     adauga o rezevare intr-o lista
     :param id:
@@ -12,10 +12,9 @@ def adaugaRezervare(id, nume, clasa, pret, checkin, lista, undo_commands = [], r
     :return:
     '''
     rezervare = creareRezervare(id, nume, clasa, pret, checkin)
-    undo_commands.append(['add', rezervare])
     return lista + [rezervare]
 
-def stergereRezervare(id, lista, undo_commands=[], redo_commands=[]):
+def stergereRezervare(id, lista):
     '''
     sterge o rezervare din lista
     :param id:
@@ -26,13 +25,9 @@ def stergereRezervare(id, lista, undo_commands=[], redo_commands=[]):
     :param lista:
     :return:
     '''
-    for rezervare in lista:
-        if getId(rezervare) == id:
-            to_delete = rezervare
-            undo_commands.append(['delete', to_delete])
     return [rezervare for rezervare in lista if getId(rezervare) != id]
 
-def modificaRezervare(id, nume, clasa, pret, checkin, lista, undo_commands=[], redo_commands=[]):
+def modificaRezervare(id, nume, clasa, pret, checkin, lista):
     '''
     modifica o rezervare din lista
     :param id:
@@ -48,7 +43,6 @@ def modificaRezervare(id, nume, clasa, pret, checkin, lista, undo_commands=[], r
     for rezervare in lista:
         if getId(rezervare) == id:
             rezervareNoua = creareRezervare(id, nume, clasa, pret, checkin)
-            undo_commands.append(['modify', rezervare, rezervareNoua])
             listaNoua.append(rezervareNoua)
         else:
             listaNoua.append(rezervare)

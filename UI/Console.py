@@ -1,18 +1,20 @@
 from Domain.Rezervare import toString, getnume
 from Logic.CRUD import adaugaRezervare, stergereRezervare, modificaRezervare
-from Logic.Functionalitati import trecere_la_rezervare_superioara, reducere_preturi_checkinfacut, \
+from Logic.Functionalitati import trecere_la_rezervare_superioara, \
+    reducere_preturi_checkinfacut, \
     max_pret_clasa, ord_descresc_pret, suma_preturi_nume, comanda_date
-from Validate.validate import validate_unique_id, validate_class, validate_pret, validate_checkin, validate_len_lista, \
+from Validate.validate import validate_unique_id, validate_class,\
+    validate_pret, validate_checkin, validate_len_lista, \
     validate_adauga_rezervare_meniu2, validate_modificare_rezervare_meniu2
 from Logic.UndoRedo import execute_redo, execute_undo
 
-class bcolors:
+class Bcolors:
     HEADER = '\033[95m'
     OKMAGENTA = '\033[35m'
     OKBLUE = '\033[94m'
     OKYELLOW = '\033[33m'
     OKCYAN = '\033[96m'
-    OKORANGE='\033[43m'
+    OKORANGE = '\033[43m'
     OKWHITE = '\033[37m'
     OKGREEN = '\033[92m'
     WARNING = '\033[93m'
@@ -22,157 +24,187 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 def print_main_menu():
-    print(f"{bcolors.OKCYAN}>>>>>>>>>>>>>{bcolors.ENDC}")
-    print(f"{bcolors.OKYELLOW}{bcolors.BOLD}1. Meniul 1:")
-    print(f"2. Meniul 2:{bcolors.ENDC}")
-    print(f"{bcolors.FAIL}x. Iesire: {bcolors.ENDC}")
-    print(f"{bcolors.OKCYAN}>>>>>>>>>>>>>{bcolors.ENDC}")
+    print(f"{Bcolors.OKCYAN}>>>>>>>>>>>>>{Bcolors.ENDC}")
+    print(f"{Bcolors.OKYELLOW}{Bcolors.BOLD}1. Meniul 1:")
+    print(f"2. Meniul 2:{Bcolors.ENDC}")
+    print(f"{Bcolors.FAIL}x. Iesire: {Bcolors.ENDC}")
+    print(f"{Bcolors.OKCYAN}>>>>>>>>>>>>>{Bcolors.ENDC}")
 
 
 def print_menu1():
-    print(f"{bcolors.OKGREEN}+++++++++++++++++++++++++++++++++++++++++{bcolors.ENDC}")
-    print(f"{bcolors.OKMAGENTA}1. Adaugare Rezervare")
+    print(f"{Bcolors.OKGREEN}+++++++++++++++++++++++++++++++++++++++++"
+          f"{Bcolors.ENDC}")
+    print(f"{Bcolors.OKMAGENTA}1. Adaugare Rezervare")
     print("2. Stergere Rezervare")
     print("3. Modificare Rezervare")
     print("4. Undo")
     print("r. Redo")
-    print(f"{bcolors.OKBLUE}5. Trecerea rezervarilor pe un nume "
+    print(f"{Bcolors.OKBLUE}5. Trecerea rezervarilor pe un nume "
           f"la o clasa superioara")
     print("6. Ieftinirea tuturor rezervărilor "
           "la care s-a făcut checkin cu un procentaj citit.")
     print("7. Determinarea pretului maxim pt fiecare clasa")
     print("8. Ordonarea rezervarilor descrescator dupa pret")
     print("9. Afisarea sumelor preturilor pt fiecare nume")
-    print(f"{bcolors.WARNING}{bcolors.BOLD}s. Șterge toate rezervarile!")
-    print(f"{bcolors.OKCYAN}a. Afisare Rezervari {bcolors.ENDC}")
-    print(f"{bcolors.FAIL}x. Iesire {bcolors.ENDC}")
-    print(f"{bcolors.OKGREEN}+++++++++++++++++++++++++++++++++++++++++{bcolors.ENDC}")
+    print(f"{Bcolors.WARNING}{Bcolors.BOLD}s. Șterge toate rezervarile!")
+    print(f"{Bcolors.OKCYAN}a. Afisare Rezervari {Bcolors.ENDC}")
+    print(f"{Bcolors.FAIL}x. Iesire {Bcolors.ENDC}")
+    print(f"{Bcolors.OKGREEN}+++++++++++++++++++++++++++++++++++"
+          f"++++++{Bcolors.ENDC}")
 
 
 def print_menu2():
-    print(f"{bcolors.OKBLUE}************{bcolors.ENDC}")
-    print(f"{bcolors.BOLD}a. Ajutor{bcolors.ENDC}")
-    print(f"{bcolors.HEADER}s. Start{bcolors.ENDC}")
-    print(f"{bcolors.FAIL}x. Iesire{bcolors.ENDC}")
-    print(f"{bcolors.OKBLUE}************{bcolors.ENDC}")
+    print(f"{Bcolors.OKBLUE}************{Bcolors.ENDC}")
+    print(f"{Bcolors.BOLD}a. Ajutor{Bcolors.ENDC}")
+    print(f"{Bcolors.HEADER}s. Start{Bcolors.ENDC}")
+    print(f"{Bcolors.FAIL}x. Iesire{Bcolors.ENDC}")
+    print(f"{Bcolors.OKBLUE}************{Bcolors.ENDC}")
 
 
 def meniu_ajutor():
-    print(f"{bcolors.HEADER}    Salut si bine a-ți venit la meniul de ajutor petru rezervări de zboruri ! :)")
+    print(f"{Bcolors.HEADER}    Salut si bine a-ți venit"
+          f" la meniul de ajutor petru rezervări de zboruri ! :)")
     print("Functiile puse la dispoziție sunt următoarele:")
-    print(f"{bcolors.OKBLUE}1.ADAUGĂ REZERVARE: 1.Id , 2.Nume , 3.Clasa:Economy, Economy Plus sau Business ,4.Prețul ,"
-          f" 5,Checkin: Făcut sau Nu este Făcut {bcolors.BOLD}+{bcolors.WARNING} "
-          f"comanda:'adauga rezervare'{bcolors.ENDC}")
-    print(f"{bcolors.OKBLUE}2.MODIFICĂ REZERVARE: 1.Id-ul de modificat , 2.Nume , 3.Clasa:Economy,"
+    print(f"{Bcolors.OKBLUE}1.ADAUGĂ REZERVARE: 1.Id , 2.Nume ,"
+          f" 3.Clasa:Economy, Economy Plus sau Business ,4.Prețul ,"
+          f" 5,Checkin: Făcut sau Nu este"
+          f" Făcut {Bcolors.BOLD}+{Bcolors.WARNING} "
+          f"comanda:'adauga rezervare'{Bcolors.ENDC}")
+    print(f"{Bcolors.OKBLUE}2.MODIFICĂ REZERVARE: 1.Id-ul de modificat ,"
+          f" 2.Nume , 3.Clasa:Economy,"
           f" Economy Plus sau Business ,4.Prețul ,"
-          f" 5,Checkin: Făcut sau Nu este Făcut {bcolors.BOLD}+{bcolors.WARNING}"
-          f" comanda:'modifica rezervare'{bcolors.ENDC}")
-    print(f"{bcolors.OKBLUE}3.ȘTERGE REZERVARE: 1.Id-ul de șters {bcolors.BOLD}+{bcolors.WARNING}"
+          f" 5,Checkin: Făcut sau Nu este Făcut"
+          f" {Bcolors.BOLD}+{Bcolors.WARNING}"
+          f" comanda:'modifica rezervare'{Bcolors.ENDC}")
+    print(f"{Bcolors.OKBLUE}3.ȘTERGE REZERVARE: 1.Id-ul"
+          f" de șters {Bcolors.BOLD}+{Bcolors.WARNING}"
           f" comanda:'adauga rezervare'"
-          f"{bcolors.ENDC}")
-    print(f"{bcolors.OKBLUE}4.TRECEREA REZERVARILOR PE UN NUME LA O CLASĂ SUPERIOARĂ: Numele Dorit"
-          f" {bcolors.BOLD}+{bcolors.WARNING} comanda 'trece la clasa superioara'{bcolors.ENDC}")
-    print(f"{bcolors.OKBLUE}5.REDUCERE PENTRU CHECKIN FĂCUT: Procentajul dorit fără %  {bcolors.BOLD}+"
-          f"{bcolors.WARNING} comanda 'reducere pentru checkin facut'{bcolors.ENDC}")
-    print(f"{bcolors.OKBLUE}6.PREȚUL MAXIM PENTRU FIECARE CLASĂ: doar comanda "
-          f"{bcolors.WARNING}'max pret clasa'{bcolors.ENDC}")
-    print(f"{bcolors.OKBLUE}7.ORDONAREA REZERVĂRILOR DESCRESCĂTOR DUPĂ PREȚ: doar comanda: "
-          f"{bcolors.WARNING}'ordoneaza descrescator'{bcolors.ENDC}")
-    print(f"{bcolors.OKBLUE}8.AFIȘAREA SUMELOR PREȚURILOR PENTRU FIECARE NUME: doar comanda: "
-          f"{bcolors.WARNING}'suma preturi nume'{bcolors.ENDC}")
-    print(f"{bcolors.OKBLUE}U.UNDO:doar comanda:{(bcolors.WARNING)} 'undo'"f"{bcolors.ENDC}")
-    print(f"{bcolors.OKBLUE}R.REDO:doar comanda:{(bcolors.WARNING)} 'redo'"f"{bcolors.ENDC}")
-    print(f"{bcolors.OKBLUE}S.SHOWALL:doar comanda:{(bcolors.WARNING)} 'showall'"f"{bcolors.ENDC}")
-
-
+          f"{Bcolors.ENDC}")
+    print(f"{Bcolors.OKBLUE}4.TRECEREA REZERVARILOR PE UN NUME LA O CLASĂ"
+          f" SUPERIOARĂ: Numele Dorit"
+          f" {Bcolors.BOLD}+{Bcolors.WARNING} comanda 'trece la clasa "
+          f"superioara'{Bcolors.ENDC}")
+    print(f"{Bcolors.OKBLUE}5.REDUCERE PENTRU CHECKIN FĂCUT: Procentajul dorit"
+          f" fără %  {Bcolors.BOLD}+"
+          f"{Bcolors.WARNING} comanda 'reducere pentru checkin"
+          f" facut'{Bcolors.ENDC}")
+    print(f"{Bcolors.OKBLUE}6.PREȚUL MAXIM PENTRU FIECARE CLASĂ: doar comanda "
+          f"{Bcolors.WARNING}'max pret clasa'{Bcolors.ENDC}")
+    print(f"{Bcolors.OKBLUE}7.ORDONAREA REZERVĂRILOR DESCRESCĂTOR DUPĂ"
+          f" PREȚ: doar comanda: "
+          f"{Bcolors.WARNING}'ordoneaza descrescator'{Bcolors.ENDC}")
+    print(f"{Bcolors.OKBLUE}8.AFIȘAREA SUMELOR PREȚURILOR PENTRU FIECARE"
+          f" NUME: doar comanda: "
+          f"{Bcolors.WARNING}'suma preturi nume'{Bcolors.ENDC}")
+    print(f"{Bcolors.OKBLUE}U.UNDO:doar comanda:{Bcolors.WARNING}"
+          f" 'undo'"f"{Bcolors.ENDC}")
+    print(f"{Bcolors.OKBLUE}R.REDO:doar comanda:{Bcolors.WARNING}"
+          f" 'redo'"f"{Bcolors.ENDC}")
+    print(f"{Bcolors.OKBLUE}S.SHOWALL:doar comanda:{Bcolors.WARNING}"
+          f" 'showall'"f"{Bcolors.ENDC}")
 
 
 def citire_date():
-    givenstring = input(f"{bcolors.BOLD}Dati comanda, cu elementele separate prin virgula sau x daca vrei sa "
-                        f"renunti: {bcolors.ENDC}")
+    givenstring = input(f"{Bcolors.BOLD}Dati comanda,"
+                        f" cu elementele separate prin virgula"
+                        f" sau x daca vrei sa "
+                        f"renunti: {Bcolors.ENDC}")
     date = givenstring.split(",")
     return date
 
 
 def citire_id_ui(lista):
-    id = input(f"{bcolors.BOLD}Dati id-ul rezervarii: ")
+    id = input(f"{Bcolors.BOLD}Dati id-ul rezervarii: ")
     while not validate_unique_id(id, lista):
-        print(f"{bcolors.FAIL}id-ul dat este invalid, reîncearcă:{bcolors.ENDC}")
-        id = input(f"{bcolors.BOLD}Dati id-ul rezervarii: ")
+        print(f"{Bcolors.FAIL}id-ul dat este invalid,"
+              f" reîncearcă:{Bcolors.ENDC}")
+        id = input(f"{Bcolors.BOLD}Dati id-ul rezervarii: ")
     return id
 
 
 def stergere_modificare_by_id(lista):
-    id = input(f"{bcolors.BOLD}Dati id-ul rezervarii: ")
+    id = input(f"{Bcolors.BOLD}Dati id-ul rezervarii: ")
     while validate_unique_id(id, lista):
-        print(f"{bcolors.FAIL}id-ul dat este invalid, reîncearcă:{bcolors.ENDC}")
-        id = input(f"{bcolors.BOLD}Dati id-ul rezervarii: ")
+        print(f"{Bcolors.FAIL}id-ul dat este invalid,"
+              f" reîncearcă:{Bcolors.ENDC}")
+        id = input(f"{Bcolors.BOLD}Dati id-ul rezervarii: ")
     return id
 
 
 def print_meniu_clase():
-    print(f"{bcolors.OKCYAN}    Meniu de clase ale zborului:")
-    print(f"{bcolors.OKGREEN}            1.Economy")
-    print(f"{bcolors.OKGREEN}            2.Economy Plus")
-    print(f"{bcolors.OKGREEN}            3.Business{bcolors.ENDC}")
+    print(f"{Bcolors.OKCYAN}    Meniu de clase ale zborului:")
+    print(f"{Bcolors.OKGREEN}            1.Economy")
+    print(f"{Bcolors.OKGREEN}            2.Economy Plus")
+    print(f"{Bcolors.OKGREEN}            3.Business{Bcolors.ENDC}")
 
 
 def clasa_ui():
     print_meniu_clase()
-    clasa = input(f"{bcolors.OKCYAN}    Selectati clasa zborului: {bcolors.ENDC}")
+    clasa = input(f"{Bcolors.OKCYAN}    Selectati clasa"
+                  f" zborului: {Bcolors.ENDC}")
     while not validate_class(clasa):
-        print(f"{bcolors.FAIL}Clasa precizata nu exista, incearca din nou:{bcolors.ENDC}")
-        clasa = input(f"{bcolors.OKCYAN}    Selectati clasa zborului: {bcolors.ENDC}")
+        print(f"{Bcolors.FAIL}Clasa precizata nu exista,"
+              f" incearca din nou:{Bcolors.ENDC}")
+        clasa = input(f"{Bcolors.OKCYAN}    Selectati clasa"
+                      f" zborului: {Bcolors.ENDC}")
     return validate_class(clasa)
 
 
 def pret_ui():
-    pret = (input(f"{bcolors.UNDERLINE}{bcolors.OKYELLOW}Dati pretul zborului: {bcolors.ENDC}"))
+    pret = (input(f"{Bcolors.UNDERLINE}{Bcolors.OKYELLOW}Dati pretul"
+                  f" zborului: {Bcolors.ENDC}"))
     while validate_pret(pret) is False:
         print("Eroare, pretul este invalid, te rog reîncearcă: ")
-        pret = (input(f"{bcolors.UNDERLINE}{bcolors.OKYELLOW}Dati pretul zborului: {bcolors.ENDC}"))
+        pret = (input(f"{Bcolors.UNDERLINE}{Bcolors.OKYELLOW}Dati"
+                      f" pretul zborului: {Bcolors.ENDC}"))
     return pret
 
 
 def checkin_ui():
-    print(f"{bcolors.OKCYAN}{bcolors.BOLD}Este facut checkinul? {bcolors.ENDC}")
-    checkin = input(f"{bcolors.OKBLUE}1.DA {bcolors.ENDC}/{bcolors.FAIL} 2.NU: {bcolors.ENDC}")
+    print(f"{Bcolors.OKCYAN}{Bcolors.BOLD}Este facut"
+          f" checkinul? {Bcolors.ENDC}")
+    checkin = input(f"{Bcolors.OKBLUE}1.DA {Bcolors.ENDC}/{Bcolors.FAIL}"
+                    f" 2.NU: {Bcolors.ENDC}")
     while validate_checkin(checkin) is False:
-        print(f"{bcolors.FAIL}Numarul selectat nu este corect, reincercati :{bcolors.ENDC}")
-        checkin = input(f"{bcolors.OKBLUE}1.DA {bcolors.ENDC}/{bcolors.FAIL} 2.NU: {bcolors.ENDC}")
+        print(f"{Bcolors.FAIL}Numarul selectat"
+              f" nu este corect, reincercati :{Bcolors.ENDC}")
+        checkin = input(f"{Bcolors.OKBLUE}1.DA "
+                        f"{Bcolors.ENDC}/{Bcolors.FAIL} 2.NU: {Bcolors.ENDC}")
     return validate_checkin(checkin)
 
 
-def ui_adauga_rezervare(lista):
+def ui_adauga_rezervare(lista, undo_commands):
     id = citire_id_ui(lista)
-    nume = input(f"Dati numele zborului: {bcolors.ENDC}")
+    nume = input(f"Dati numele zborului: {Bcolors.ENDC}")
     clasa = clasa_ui()
     pret = pret_ui()
     pret = float(pret)
     checkin = checkin_ui()
-
+    undo_commands.append(lista)
     return adaugaRezervare(id, nume, clasa, pret, checkin, lista)
 
 
-def ui_sterge_rezervare(lista):
+def ui_sterge_rezervare(lista, undo_commands):
     id = stergere_modificare_by_id(lista)
+    undo_commands.append(lista)
     return stergereRezervare(id, lista)
 
 
-def ui_modifica_rezervare(lista, undo_commands, redo_commands):
+def ui_modifica_rezervare(lista, undo_commands):
     id = stergere_modificare_by_id(lista)
-    nume = input(f"Dati numele zborului: {bcolors.ENDC}")
+    nume = input(f"Dati numele zborului: {Bcolors.ENDC}")
     clasa = clasa_ui()
     pret = pret_ui()
     pret = float(pret)
     checkin = checkin_ui()
-    return modificaRezervare(id, nume, clasa, pret, checkin, lista, undo_commands, redo_commands)
+    undo_commands.append(lista)
+    return modificaRezervare(id, nume, clasa, pret, checkin, lista)
 
 
-def showall(lista, undo_commands, redo_commands):
+def showall(lista):
     if len(lista) == 0:
-        print(f"{bcolors.OKGREEN}{bcolors.BOLD}Momentan nu sunt rezervari.")
-        print(f"Puteti face rezervari folosind optiunea 1{bcolors.ENDC}")
+        print(f"{Bcolors.OKGREEN}{Bcolors.BOLD}Momentan nu sunt rezervari.")
+        print(f"Puteti face rezervari folosind optiunea 1{Bcolors.ENDC}")
     else:
         for rezervare in lista:
             print(toString(rezervare))
@@ -180,36 +212,42 @@ def showall(lista, undo_commands, redo_commands):
 
 
 def ui_trecere_rezervare_ui(lista):
-    print(f"{bcolors.OKMAGENTA}Rezervarile facute sunt: {bcolors.ENDC}")
+    print(f"{Bcolors.OKMAGENTA}Rezervarile facute sunt: {Bcolors.ENDC}")
     for rezervare in lista:
-        print(f"{bcolors.BOLD}" + rezervare["nume"] + "    clasa:" + rezervare["clasa"] + f"{bcolors.ENDC}")
-    nume = input(f"{bcolors.OKMAGENTA}Dati numele rezervarii pe care "
-                 f"vreti sa o treceti la o clasa superioara sau x daca vrei sa renunti: {bcolors.ENDC}")
+        print(f"{Bcolors.BOLD}" + rezervare["nume"] + "    clasa:" +
+              rezervare["clasa"] + f"{Bcolors.ENDC}")
+    nume = input(f"{Bcolors.OKMAGENTA}Dati numele rezervarii pe care "
+                 f"vreti sa o treceti la o clasa superioara sau x"
+                 f" daca vrei sa renunti: {Bcolors.ENDC}")
     if nume == "x" or nume == "X":
         return lista
     while True:
         for rezervare in lista:
             if nume == getnume(rezervare):
                 return trecere_la_rezervare_superioara(nume, lista)
-        print(f"{bcolors.FAIL}Nu exista numele acesta in lista de rezervari")
-        nume = input(f"{bcolors.OKMAGENTA}Dati numele rezervarii pe care "
-                     f"vreti sa o treceti la o clasa superioara sau x daca vrei sa renunti: {bcolors.ENDC}")
+        print(f"{Bcolors.FAIL}Nu exista numele acesta in lista de rezervari")
+        nume = input(f"{Bcolors.OKMAGENTA}Dati numele rezervarii pe care "
+                     f"vreti sa o treceti la o clasa superioara"
+                     f" sau x daca vrei sa renunti: {Bcolors.ENDC}")
         if nume == "x" or nume == "X":
             return lista
 
 
 def reducere_preturi_checkinfacut_ui(lista):
-    p = int(input(f"{bcolors.OKYELLOW}Dați procentajul dorit pentru"
-                  f"ieftinirea preturilor: {bcolors.ENDC}"))
+    p = int(input(f"{Bcolors.OKYELLOW}Dați procentajul dorit pentru"
+                  f"ieftinirea preturilor: {Bcolors.ENDC}"))
     return reducere_preturi_checkinfacut(lista, p)
 
 
 def max_pret_clasa_ui(lista):
     if validate_len_lista_ui(lista):
         max_e, max_ep, max_b = max_pret_clasa(lista)
-        print(f"{bcolors.OKMAGENTA}{bcolors.BOLD}Clasa Economy are pretul maxim " + str(max_e))
-        print(f"{bcolors.OKMAGENTA}{bcolors.BOLD}Clasa Economy Plus are pretul maxim " + str(max_ep))
-        print(f"{bcolors.OKMAGENTA}{bcolors.BOLD}Clasa Business are pretul maxim " + str(max_b) + f"{bcolors.ENDC}")
+        print(f"{Bcolors.OKMAGENTA}{Bcolors.BOLD}Clasa"
+              f" Economy are pretul maxim " + str(max_e))
+        print(f"{Bcolors.OKMAGENTA}{Bcolors.BOLD}Clasa"
+              f" Economy Plus are pretul maxim " + str(max_ep))
+        print(f"{Bcolors.OKMAGENTA}{Bcolors.BOLD}Clasa"
+              f" Business are pretul maxim " + str(max_b) + f"{Bcolors.ENDC}")
 
 
 def ui_rezervari_nume(lista):
@@ -221,35 +259,38 @@ def ui_rezervari_nume(lista):
 
 def validate_len_lista_ui(lista):
     if validate_len_lista(lista) is False:
-        print(f"{bcolors.FAIL}Nu este nicio rezevare facuta, "
-              f"incearca sa adaugi una: {bcolors.ENDC}")
+        print(f"{Bcolors.FAIL}Nu este nicio rezevare facuta, "
+              f"incearca sa adaugi una: {Bcolors.ENDC}")
         return False
     return True
 
 
-def ui_adauga_rezervare_meniu2(date, lista, undo_commands, redo_commands):
+def ui_adauga_rezervare_meniu2(date, lista):
     if validate_adauga_rezervare_meniu2(date, lista) is True:
-        return adaugaRezervare(date[0], date[1], date[2], int(date[3]), date[4], lista, undo_commands, redo_commands)
+        return adaugaRezervare(date[0], date[1], date[2],
+                               int(date[3]), date[4], lista)
     else:
-        print(f"{bcolors.FAIL}Datele date sunt greșite sau se repetă, incearca din nou: {bcolors.ENDC}")
+        print(f"{Bcolors.FAIL}Datele date sunt greșite sau se repetă, incearca"
+              f" din nou: {Bcolors.ENDC}")
         return lista
 
 
-def ui_modificare_rezervare_meniu2(date, lista, undo_commands, redo_commands):
+def ui_modificare_rezervare_meniu2(date, lista):
     if validate_modificare_rezervare_meniu2(date, lista) is True:
-        return modificaRezervare(date[0], date[1], date[2], int(date[3]), date[4], lista, undo_commands, redo_commands)
+        return modificaRezervare(date[0], date[1], date[2], int(date[3]),
+                                 date[4], lista)
     else:
-        print(f"{bcolors.FAIL}Am intampinat o eroare la citirea comenzii dvs."
-              f"va rugam reincercati: {bcolors.ENDC}")
+        print(f"{Bcolors.FAIL}Am intampinat o eroare la citirea comenzii dvs."
+              f"va rugam reincercati: {Bcolors.ENDC}")
         return lista
 
 
-def ui_sterge_rezervare_meniu2(date, lista, undo_commands, redo_commands):
+def ui_sterge_rezervare_meniu2(date, lista):
     if validate_unique_id(date[0], lista) is False:
-        return stergereRezervare(date[0], lista, undo_commands, redo_commands)
+        return stergereRezervare(date[0], lista)
     else:
-        print(f"{bcolors.FAIL}Id-ul dat nu se află in lista de rezervări"
-              f"vă rugăm să reîncercați{bcolors.ENDC}")
+        print(f"{Bcolors.FAIL}Id-ul dat nu se află in lista de rezervări"
+              f"vă rugăm să reîncercați{Bcolors.ENDC}")
         return lista
 
 
@@ -260,8 +301,8 @@ def ui_trecere_la_clasa_superioara(date, lista):
             if getnume(rezervare) == nume:
                 lista = trecere_la_rezervare_superioara(date[0], lista)
         else:
-            print(f"{bcolors.FAIL}Numele dat nu se regăsește în lista de "
-                  f"rezervări, încercați din nou:{bcolors.ENDC}")
+            print(f"{Bcolors.FAIL}Numele dat nu se regăsește în lista de "
+                  f"rezervări, încercați din nou:{Bcolors.ENDC}")
         return lista
 
 
@@ -271,7 +312,8 @@ def ui_reducere_preturi_checkinfacut(date, lista):
         if validate_pret(p):
             lista = reducere_preturi_checkinfacut(lista, p)
         else:
-            print(f"{bcolors.FAIL}Prețul dat este incorect, reîncercați: {bcolors.ENDC}")
+            print(f"{Bcolors.FAIL}Prețul dat este incorect, reîncercați:"
+                  f" {Bcolors.ENDC}")
     return lista
 
 def runmenu1(lista, undo_commands, redo_commands):
@@ -279,49 +321,39 @@ def runmenu1(lista, undo_commands, redo_commands):
         print_menu1()
         optiune = input("Dați optiunea: ")
         if optiune == "1":
-            undo = lista
-            lista = ui_adauga_rezervare(lista)
-            redo = lista
+            lista = ui_adauga_rezervare(lista, undo_commands)
         elif optiune == "2":
             if validate_len_lista_ui(lista):
-                undo = lista
-                lista = ui_sterge_rezervare(lista)
-                redo = lista
+                lista = ui_sterge_rezervare(lista, undo_commands)
         elif optiune == "3":
             if validate_len_lista_ui(lista):
-                undo = lista
-                lista = ui_modifica_rezervare(lista, undo_commands, redo_commands)
-                redo = lista
+                lista = ui_modifica_rezervare(lista, undo_commands)
         elif optiune == "4":
-            lista = undo
+            lista = execute_undo(lista, undo_commands, redo_commands)
         elif optiune == "5":
+            undo_commands.append(lista)
             if validate_len_lista_ui(lista):
-                undo = lista
                 lista = ui_trecere_rezervare_ui(lista)
-                redo = lista
         elif optiune == "6":
+            undo_commands.append(lista)
             if validate_len_lista_ui(lista):
-                undo = lista
                 lista = reducere_preturi_checkinfacut_ui(lista)
-                redo = lista
         elif optiune == "7":
             if validate_len_lista_ui(lista):
                 max_pret_clasa_ui(lista)
         elif optiune == "8":
             if validate_len_lista_ui(lista):
-                undo = lista
+                undo_commands.append(lista)
                 lista = ord_descresc_pret(lista)
-                redo = lista
         elif optiune == "9":
             ui_rezervari_nume(lista)
         elif optiune == "s" or optiune == "S":
-            undo = lista
+            undo_commands.append(lista)
             lista = []
-            redo = lista
         elif optiune == "r" or optiune == "R":
-            lista = redo
+            lista = execute_redo(lista, undo_commands, redo_commands)
         elif optiune == "a":
-            showall(lista, undo_commands, redo_commands)
+            showall(lista)
         elif optiune == "x" or optiune == "X":
             break
         else:
@@ -337,11 +369,11 @@ def runmenu2(lista, undo_commands, redo_commands):
                 date = citire_date()
                 optiune2 = comanda_date(date)
                 if optiune2 == "1":
-                    lista = ui_adauga_rezervare_meniu2(date, lista, undo_commands, redo_commands)
+                    lista = ui_adauga_rezervare_meniu2(date, lista)
                 elif optiune2 == "2":
-                    lista = ui_sterge_rezervare_meniu2(date, lista, undo_commands, redo_commands)
+                    lista = ui_sterge_rezervare_meniu2(date, lista)
                 elif optiune2 == "3":
-                    lista = ui_modificare_rezervare_meniu2(date, lista, undo_commands, redo_commands)
+                    lista = ui_modificare_rezervare_meniu2(date, lista)
                 elif optiune2 == "4":
                     lista = ui_trecere_la_clasa_superioara(date, lista)
                 elif optiune2 == "5":
@@ -355,7 +387,7 @@ def runmenu2(lista, undo_commands, redo_commands):
                 elif optiune2 == "x":
                     break
                 elif optiune2 == "a":
-                    showall(lista, undo_commands, redo_commands)
+                    showall(lista)
                 elif optiune2 == "u":
                     lista = execute_undo(lista, undo_commands, redo_commands)
                     pass
