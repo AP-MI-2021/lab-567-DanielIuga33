@@ -67,8 +67,8 @@ def max_pret_clasa(lista):
 
 def ord_descresc_pret(lista):
     listanoua = []
-    maxim = 0
     while len(lista) > 0:
+        maxim = 0
         for rezervare in lista:
             if getpret(rezervare) > maxim:
                 maxim = getpret(rezervare)
